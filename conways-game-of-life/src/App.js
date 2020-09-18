@@ -1,12 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
-import Cell from './components/Cell'
+import Grid from './components/Grid';
 
 function App() {
-  return (
+  const [running, setRunning] = useState(false)
+  return(
     <div>
       <h1>Conway's Game of Life</h1>
-      <Cell />
+      <Grid />
+      <button onClick={() => setRunning(!running)}>
+        {running ? 'stop': 'start'}
+      </button>
     </div>
   );
 }

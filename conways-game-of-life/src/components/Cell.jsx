@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 
-function Cell() {
+function Cell(props) {
     const [status, setStatus] = useState(false)
 
     return (
         <div onClick={() => {
-            setStatus(!status)}
-            } 
+            setStatus(!status)
+        }}
             style={{
                 height: '20px', 
                 width: '20px', 
-                backgroundColor: status ? 'black' : undefined, 
-                border: 'solid 1px black'
+                backgroundColor: status ? 'red' : 'black', 
+                border: 'solid 1px white'
                 }}
         >
 
