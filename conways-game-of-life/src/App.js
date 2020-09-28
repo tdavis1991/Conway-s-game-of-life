@@ -2,30 +2,6 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import './App.css';
 import produce from "immer";
 
-let numRows = 50;
-let numCols = 50;
-
-// function grids(gridSize) {
-//   if(gridSize === 'small') {
-//     let numRows = 25;
-//     let numCols = 25;
-//     console.log(gridSize)
-//   }
-
-//   if(gridSize === 'medium') {
-//     let numRows = 50;
-//     let numCols = 50;
-//     console.log(gridSize)
-//   }
-
-//   if(gridSize === 'large') {
-//     let numRows = 75;
-//     let numCols = 75;
-//     console.log(gridSize)
-//   }
-//   console.log(gridSize)
-// }
-
 
 const operations = [
   [0, 1],
@@ -38,32 +14,24 @@ const operations = [
   [-1, 0]
 ];
 
-const generateEmptyGrid = () => {
-  const rows = [];
-  for (let i = 0; i < numRows; i++) {
-    rows.push(Array.from(Array(numCols), () => 0));
-  }
 
-  return rows;
-};
 
 function App() {
-  const [generation, setGeneration] = useState(-1)
-  const [select, setSelect] = useState()
-  const [gridSize, setGridSize] = useState('')
+  const [gridSize, setGridSize] = useState({
+    numCols: 30,
+    numRows: 30
+  })
+
+  const generateEmptyGrid = () => {
+    const rows = [];
+    for (let i = 0; i < gridSize.numRows; i++) {
+      rows.push(Array.from(Array(gridSize.numCols), () => 0));
+    }
   
-
-  // function selectSize(e) {
-  //   setGridSize(e.target.value)
-
-
-  // }
-
-  // function handleSubmit(e) {
-  //   e.preventDefault();
-
-  //   grids(gridSize)
-  // }
+    return rows;
+  };
+  const [generation, setGeneration] = useState(-1)
+  const [speed, setSpeed] = useState(500)
   
 
   const [grid, setGrid] = useState(() => {
@@ -79,37 +47,37 @@ function App() {
   const runningRef = useRef(running);
   runningRef.current = running;
 
-  const runSimulation = useCallback(() => {
-    if (!runningRef.current) {
-      return;
-    }
 
-    setGrid(g => {
-      //  The rules for the game of life
-      return produce(g, gridCopy => {
-        for (let i = 0; i < numRows; i++) {
-          for (let k = 0; k < numCols; k++) {
-            let neighbors = 0;
-            operations.forEach(([x, y]) => {
-              const newI = i + x;
-              const newK = k + y;
-              if (newI >= 0 && newI < numRows && newK >= 0 && newK < numCols) {
-                neighbors += g[newI][newK];
+
+    let runSimulation = useCallback(() => {
+      if (!runningRef.current) {
+        return;
+      }
+        setGrid(g => {
+          //  The rules for the game of life
+          return produce(g, gridCopy => {
+            for (let i = 0; i < gridSize.numRows; i++) {
+              for (let k = 0; k < gridSize.numCols; k++) {
+                let neighbors = 0;
+                operations.forEach(([x, y]) => {
+                  const newI = i + x;
+                  const newK = k + y;
+                  if (newI >= 0 && newI < gridSize.numRows && newK >= 0 && newK < gridSize.numCols) {
+                    neighbors += g[newI][newK];
+                  }
+                });
+    
+                if (neighbors < 2 || neighbors > 3) {
+                  gridCopy[i][k] = 0;
+                } else if (g[i][k] === 0 && neighbors === 3) {
+                  gridCopy[i][k] = 1;
+                }
               }
-            });
-
-            if (neighbors < 2 || neighbors > 3) {
-              gridCopy[i][k] = 0;
-            } else if (g[i][k] === 0 && neighbors === 3) {
-              gridCopy[i][k] = 1;
             }
-          }
-        }
-      });
-    });
-
-    setTimeout(runSimulation, 100);
-  }, []);
+          });
+        });
+          setTimeout(runSimulation, speed);  
+    }, [gridSize, speed]);
 
   return (
     <div style={{display: 'flex', flexDirection: 'row-reverse', justifyContent: 'flex-end', margin: '20px'}}>
@@ -132,9 +100,9 @@ function App() {
           className='button'
           onClick={() => {
             const rows = [];
-            for (let i = 0; i < numRows; i++) {
+            for (let i = 0; i < gridSize.numRows; i++) {
               rows.push(
-                Array.from(Array(numCols), () => (Math.random() > 0.7 ? 1 : 0))
+                Array.from(Array(gridSize.numCols), () => (Math.random() > 0.7 ? 1 : 0))
               );
             }
 
@@ -155,27 +123,23 @@ function App() {
         >
           clear
         </button>
-
-        {/*Select Grid size for game*/}
-        <form>
-          <label className='label-style'>Select Grid size:</label>
-          <select name='size' id='grid-size' className='drop-down' value={gridSize}>
-            <option value='small'>Small</option>
-            <option value='medium'>Medium</option>
-            <option value='large'>Large</option>
-            
-          </select>
-          <button type='submit'>Size</button>
-        </form>
-
-        {/* Select speed for game */}
-        <label className='label-style'>Select Speed:</label>
-        <select name='speed' id='grid-speed' className='drop-down'>
-          <option value='slow'>Slow</option>
-          <option value='normal'>Normal</option>
-          <option value='fast'>Fast</option>
-        </select>
-
+        {/* Grid size */}
+        <label className='label-style'>Grid Size:</label>
+        <div> 
+          <button className='small-button' onClick={() => setGridSize({numRows: 50, numCols: 50})}>Large</button>
+          <button className='small-button' onClick={() => setGridSize({numRows: 30, numCols: 30})}>Normal</button>
+          <button className='small-button' onClick={() => setGridSize({numRows: 15, numCols: 15})}>Small</button>
+        </div>
+        
+        {/* Grid speed */}
+        <label className='label-style'>Grid Speed:</label>
+        <div>        
+          <button className='small-button' onClick={() => setSpeed(100)}>Fast</button>
+          <button className='small-button' onClick={() => setSpeed(500)}>Normal</button>
+          <button className='small-button' onClick={() => setSpeed(1000)}>Slow</button>
+        </div>
+        
+        
       </div>
       
     
@@ -183,7 +147,7 @@ function App() {
       
         style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${numCols}, 20px)`
+          gridTemplateColumns: `repeat(${gridSize.numCols}, 20px)`
         }}
       >
         {/*Generating the grid for the game*/}
