@@ -15,23 +15,17 @@ const operations = [
   ];
 
 function Grid() {
-
-    const [gridSize, setGridSize] = useState({
-        numCols: 30,
-        numRows: 30
-      })
-    
+      
       const generateEmptyGrid = () => {
         const rows = [];
-        for (let i = 0; i < gridSize.numRows; i++) {
-          rows.push(Array.from(Array(gridSize.numCols), () => 0));
+        for (let i = 0; i < 30; i++) {
+          rows.push(Array.from(Array(30), () => 0));
         }
       
         return rows;
       };
       const [generation, setGeneration] = useState(-1)
       const [speed, setSpeed] = useState(500)
-      
     
       const [grid, setGrid] = useState(() => {
         return generateEmptyGrid();
@@ -55,13 +49,13 @@ function Grid() {
             setGrid(g => {
               //  The rules for the game of life
               return produce(g, gridCopy => {
-                for (let i = 0; i < gridSize.numRows; i++) {
-                  for (let k = 0; k < gridSize.numCols; k++) {
+                for (let i = 0; i < 30; i++) {
+                  for (let k = 0; k < 30; k++) {
                     let neighbors = 0;
                     operations.forEach(([x, y]) => {
                       const newI = i + x;
                       const newK = k + y;
-                      if (newI >= 0 && newI < gridSize.numRows && newK >= 0 && newK < gridSize.numCols) {
+                      if (newI >= 0 && newI < 30 && newK >= 0 && newK < 30) {
                         neighbors += g[newI][newK];
                       }
                     });
@@ -76,7 +70,7 @@ function Grid() {
               });
             });
               setTimeout(runSimulation, speed);  
-        }, [gridSize, speed]);
+        }, [speed]);
     
       return (
         <div style={{display: 'flex', flexDirection: 'row-reverse', justifyContent: 'flex-end', margin: '20px'}}>
@@ -99,9 +93,9 @@ function Grid() {
               className='button'
               onClick={() => {
                 const rows = [];
-                for (let i = 0; i < gridSize.numRows; i++) {
+                for (let i = 0; i < 30; i++) {
                   rows.push(
-                    Array.from(Array(gridSize.numCols), () => (Math.random() > 0.7 ? 1 : 0))
+                    Array.from(Array(30), () => (Math.random() > 0.7 ? 1 : 0))
                   );
                 }
     
@@ -122,13 +116,6 @@ function Grid() {
             >
               clear
             </button>
-            {/* Grid size */}
-            <label className='label-style'>Grid Size:</label>
-            <div> 
-              <button className='small-button' onClick={() => setGridSize({numRows: 50, numCols: 50})}>Large</button>
-              <button className='small-button' onClick={() => setGridSize({numRows: 30, numCols: 30})}>Normal</button>
-              <button className='small-button' onClick={() => setGridSize({numRows: 15, numCols: 15})}>Small</button>
-            </div>
             
             {/* Grid speed */}
             <label className='label-style'>Grid Speed:</label>
@@ -138,6 +125,7 @@ function Grid() {
               <button className='small-button' onClick={() => setSpeed(1000)}>Slow</button>
             </div>
             
+            <p id='speed-instructions'>In order to change the speed first stop the cell automation then set different speed.</p>
             
           </div>
           
@@ -146,7 +134,7 @@ function Grid() {
           
             style={{
               display: "grid",
-              gridTemplateColumns: `repeat(${gridSize.numCols}, 20px)`
+              gridTemplateColumns: `repeat(${30}, 20px)`
             }}
           >
             {/*Generating the grid for the game*/}

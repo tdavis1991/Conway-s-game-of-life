@@ -92,6 +92,7 @@ h4 {
   border-radius: 30px;
   background-color: #f7b42c;
   background-image: linear-gradient(315deg, #f7b42c 0%, #fc575e 74%);
+  width: 35%;
 }
 
 .label-style {
@@ -114,5 +115,10 @@ h4 {
 }
 
 .text-style {
+  font-size: 1.2rem;
+}
+
+#speed-instructions {
+  margin-left: 5px;
   font-size: 1.2rem;
 }
